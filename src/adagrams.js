@@ -1,4 +1,4 @@
-// import { of } from "core-js/core/array";
+import { of } from "core-js/core/array";
 
 const letterPool = {'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12, 'F': 2, 'G': 3, 'H': 2, 'I': 9, 
             'J': 1, 'K': 1, 'L': 4, 'M': 2, 'N': 6, 'O': 8, 'P': 2, 'Q': 1,'R': 6, 'S': 4, 
@@ -26,8 +26,7 @@ const create_dict_of_10_letters = () => {
   return dict_of_10_letters
 }
 
-// put back keyword "export"
-const drawLetters = () => {
+export const drawLetters = () => {
   selected_dict = create_dict_of_10_letters()
     list_of_letters = []
     for (const [key, value] of Object.entries(selected_dict)) {
@@ -38,8 +37,7 @@ const drawLetters = () => {
     return list_of_letters
 };
 
-// Put back keyword export
-const usesAvailableLetters = (input, lettersInHand) => {
+export const usesAvailableLetters = (input, lettersInHand) => {
     let listLettersFromWord = input.toUpperCase().split("")
 
     while (listLettersFromWord.length > 0) {
@@ -55,8 +53,7 @@ const usesAvailableLetters = (input, lettersInHand) => {
     return true
 };
 
-// Put back keyword export
-const scoreWord = word => {
+export const scoreWord = word => {
   scoreChart = {
     'A': 1, 'E': 1, 'I': 1, 'O': 1, 'L': 1, 'N': 1, 'R': 1, 'S': 1, 'T': 1, 'D': 2, 'G': 2,'B': 3, 
     'C': 3, 'M': 3, 'P': 3, 'F': 4, 'H': 4, 'V': 4, 'W': 4, 'Y': 4,'K': 5, 'J': 8, 'X': 8,'Q': 10, 
@@ -74,6 +71,46 @@ const scoreWord = word => {
   return totalPoints
 };
 
-// export const highestScoreFrom = (words) => {
-//   // Implement this method for wave 4
-// }
+const findMaxOf2Tuples = (tuple1, tuple2) => {
+    if (tuple1 === null) {
+        return tuple2
+    }
+
+    const scoreTuple1 = tuple1[1];
+    const scoreTuple2 = tuple2[1];
+    const lenTuple1 = tuple1[0].length;
+    const lenTuple2 = tuple2[0].length;
+    if (scoreTuple1 == scoreTuple2 && lenTuple1 == 10){
+        return tuple1
+    } else if (scoreTuple1 == scoreTuple2 && lenTuple1 < lenTuple2) {
+        return tuple1
+    } else if (scoreTuple1 == scoreTuple2 && lenTuple1 == lenTuple2) {
+        return tuple1
+    } else if (scoreTuple1 > scoreTuple2) {
+        return tuple1
+    } else {
+        return tuple2
+    }
+};
+
+export const highestScoreFrom = (words) => {
+    
+  let compareScores = [];
+  for (const word of words) {
+      let scorePerWord = scoreWord(word);
+      let smallList = [word, scorePerWord];
+      //let tuple = `('${smallList.join("','")}')`
+      compareScores.push(smallList)
+  }
+  // let listEntries = Object.entries(compareScores);
+  let sortedTupleScores = compareScores.sort((a, b) => a[1] - b[1]);
+  
+  let highestScore = null;
+  for (let i = 0; i < sortedTupleScores.length; i++) {
+      let tupleElement = sortedTupleScores[i]
+      let checkHigherScore = findMaxOf2Tuples(highestScore, tupleElement)
+      highestScore = checkHigherScore;
+  }
+  return highestScore
+};
+console.log(highestScoreFrom(["daniel", "daniela", "tomas"]))
