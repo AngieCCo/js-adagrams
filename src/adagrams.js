@@ -1,4 +1,4 @@
-import { of } from "core-js/core/array";
+// import { of } from "core-js/core/array";
 
 const letterPool = {'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12, 'F': 2, 'G': 3, 'H': 2, 'I': 9, 
             'J': 1, 'K': 1, 'L': 4, 'M': 2, 'N': 6, 'O': 8, 'P': 2, 'Q': 1,'R': 6, 'S': 4, 
@@ -111,6 +111,6 @@ export const highestScoreFrom = (words) => {
       let checkHigherScore = findMaxOf2Tuples(highestScore, tupleElement)
       highestScore = checkHigherScore;
   }
-  return highestScore
+  return `{word: ${highestScore[0]} score: ${highestScore[1]}}`
 };
 console.log(highestScoreFrom(["daniel", "daniela", "tomas"]))
