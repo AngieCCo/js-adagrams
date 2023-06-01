@@ -1,9 +1,4 @@
-import {
-  drawLetters,
-  usesAvailableLetters,
-  scoreWord,
-  highestScoreFrom,
-} from "adagrams";
+import Adagrams from "../src/adagrams";
 
 const LETTER_POOL = {
   A: 9,
@@ -37,13 +32,15 @@ const LETTER_POOL = {
 describe("Adagrams", () => {
   describe("drawLetters", () => {
     it("draws ten letters from the letter pool", () => {
-      const drawn = drawLetters();
+      const instance = new Adagrams();
+      const drawn = instance.drawLetters();
 
       expect(drawn).toHaveLength(10);
     });
 
     it("returns an array, and each item is a single-letter string", () => {
-      const drawn = drawLetters();
+      const instance = new Adagrams();
+      const drawn = instance.drawLetters();
 
       expect(Array.isArray(drawn)).toBe(true);
       drawn.forEach((l) => {
@@ -53,7 +50,8 @@ describe("Adagrams", () => {
 
     it("does not draw a letter too many times", () => {
       for (let i = 0; i < 1000; i++) {
-        const drawn = drawLetters();
+        const instance = new Adagrams();
+        const drawn = instance.drawLetters();
         const letter_freq = {};
         for (let letter of drawn) {
           if (letter in letter_freq) {
@@ -62,7 +60,7 @@ describe("Adagrams", () => {
             letter_freq[letter] = 1;
           }
         }
-
+        
         for (let letter of drawn) {
           expect(letter_freq[letter]).toBeLessThanOrEqual(LETTER_POOL[letter]);
         }
@@ -72,38 +70,43 @@ describe("Adagrams", () => {
 
   describe("usesAvailableLetters", () => {
     it("returns true if the submitted letters are valid against the drawn letters", () => {
+      const instance = new Adagrams();
       const drawn = ["D", "O", "G", "X", "X", "X", "X", "X", "X", "X"];
       const word = "DOG";
 
-      const isValid = usesAvailableLetters(word, drawn);
+      const isValid = instance.usesAvailableLetters(word, drawn);
       expect(isValid).toBe(true);
     });
 
     it("returns false when word contains letters not in the drawn letters", () => {
+      const instance = new Adagrams();
       const drawn = ["D", "O", "X", "X", "X", "X", "X", "X", "X", "X"];
       const word = "DOG";
 
-      const isValid = usesAvailableLetters(word, drawn);
+      const isValid = instance.usesAvailableLetters(word, drawn);
       expect(isValid).toBe(false);
     });
 
     it("returns false when word contains repeated letters more than in the drawn letters", () => {
+      const instance = new Adagrams();
       const drawn = ["D", "O", "G", "X", "X", "X", "X", "X", "X", "X"];
       const word = "GOOD";
 
-      const isValid = usesAvailableLetters(word, drawn);
+      const isValid = instance.usesAvailableLetters(word, drawn);
       expect(isValid).toBe(false);
     });
   });
 
   describe("scoreWord", () => {
+    const instance = new Adagrams();
     const expectScores = (wordScores) => {
       Object.entries(wordScores).forEach(([word, score]) => {
-        expect(scoreWord(word)).toBe(score);
+        expect(instance.scoreWord(word)).toBe(score);
       });
     };
 
     it("returns an accurate numerical score according to the score chart", () => {
+      const instance = new Adagrams();
       expectScores({
         A: 1,
         DOG: 5,
@@ -120,7 +123,7 @@ describe("Adagrams", () => {
     });
 
     it("returns a score of 0 if given an empty input", () => {
-      throw "Complete test";
+      expectScores(0);
     });
 
     it("adds an extra 8 points if word is 7 or more characters long", () => {
@@ -133,24 +136,27 @@ describe("Adagrams", () => {
     });
   });
 
-  describe.skip("highestScoreFrom", () => {
+  describe("highestScoreFrom", () => {
     it("returns a hash that contains the word and score of best word in an array", () => {
+      const instance = new Adagrams();
       const words = ["X", "XX", "XXX", "XXXX"];
-      const correct = { word: "XXXX", score: scoreWord("XXXX") };
+      const correct = { word: "XXXX", score: instance.scoreWord("XXXX") };
 
-      expect(highestScoreFrom(words)).toEqual(correct);
+      expect(instance.highestScoreFrom(words)).toEqual(correct);
     });
 
     it("accurately finds best scoring word even if not sorted", () => {
+      const instance = new Adagrams();
       const words = ["XXX", "XXXX", "X", "XX"];
-      const correct = { word: "XXXX", score: scoreWord("XXXX") };
+      const correct = { word: "XXXX", score: instance.scoreWord("XXXX") };
 
-      throw "Complete test by adding an assertion";
+      expect(instance.highestScoreFrom(words)).toEqual(correct);
     });
 
     describe("in case of tied score", () => {
       const expectTie = (words) => {
-        const scores = words.map((word) => scoreWord(word));
+        const instance = new Adagrams();
+        const scores = words.map((word) => instance.scoreWord(word));
         const highScore = scores.reduce((h, s) => (h < s ? s : h), 0);
         const tiedWords = scores.filter((s) => s == highScore);
 
@@ -159,40 +165,43 @@ describe("Adagrams", () => {
       };
 
       it("selects the word with 10 letters", () => {
+        const instance = new Adagrams();
         const words = ["AAAAAAAAAA", "BBBBBB"];
         const correct = {
           word: "AAAAAAAAAA",
-          score: scoreWord("AAAAAAAAAA"),
+          score: instance.scoreWord("AAAAAAAAAA"),
         };
         expectTie(words);
 
-        expect(highestScoreFrom(words)).toEqual(correct);
-        expect(highestScoreFrom(words.reverse())).toEqual(correct);
+        expect(instance.highestScoreFrom(words)).toEqual(correct);
+        expect(instance.highestScoreFrom(words.reverse())).toEqual(correct);
       });
 
       it("selects the word with fewer letters when neither are 10 letters", () => {
+        const instance = new Adagrams();
         const words = ["MMMM", "WWW"];
-        const correct = { word: "WWW", score: scoreWord("WWW") };
+        const correct = { word: "WWW", score: instance.scoreWord("WWW") };
         expectTie(words);
 
-        expect(highestScoreFrom(words)).toEqual(correct);
-        expect(highestScoreFrom(words.reverse())).toEqual(correct);
+        expect(instance.highestScoreFrom(words)).toEqual(correct);
+        expect(instance.highestScoreFrom(words.reverse())).toEqual(correct);
       });
 
       it("selects the first word when both have same length", () => {
+        const instance = new Adagrams();
         const words = ["AAAAAAAAAA", "EEEEEEEEEE"];
         const first = {
           word: "AAAAAAAAAA",
-          score: scoreWord("AAAAAAAAAA"),
+          score: instance.scoreWord("AAAAAAAAAA"),
         };
         const second = {
           word: "EEEEEEEEEE",
-          score: scoreWord("EEEEEEEEEE"),
+          score: instance.scoreWord("EEEEEEEEEE"),
         };
         expectTie(words);
 
-        expect(highestScoreFrom(words)).toEqual(first);
-        expect(highestScoreFrom(words.reverse())).toEqual(second);
+        expect(instance.highestScoreFrom(words)).toEqual(first);
+        expect(instance.highestScoreFrom(words.reverse())).toEqual(second);
       });
     });
   });
